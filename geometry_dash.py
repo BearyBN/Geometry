@@ -73,59 +73,94 @@ LEDGE_ASSIST = 0.52  # если задел блок выше этой высот
 
 START_X = 4.0        # стартовая позиция игрока
 
+# --- режим самолётика (ship) -----------------------------------------------
+# В оригинале розовый портал превращает кубик в кораблик: удержание — тяга
+# вверх, отпускание — падение, скорость меняется плавно (есть инерция).
+SHIP_G = 42.0        # гравитация в режиме кораблика
+SHIP_THRUST = 84.0   # тяга при удержании (итог: +42 вверх)
+SHIP_VMAX = 12.0     # ограничение вертикальной скорости
+SHIP_TILT = 0.65     # доля реального угла полёта, на которую наклоняем спрайт
+
 
 # ---------------------------------------------------------------------------
 # УРОВНИ: названия, сложности и палитры по официальным уровням Geometry Dash
 # ---------------------------------------------------------------------------
 
+# "ship" — участки на кораблике, доли от длины уровня. Там, где известно,
+# взяты настоящие проценты из описаний официальных уровней:
+# Stereo Madness 30-48 % и 85-100 %, Polargeist 34-47 %, Dry Out 67-83 %,
+# Base After Base 52-69 %, Jumper 25-37 % и 62-75 %.
+# "ceil" — высота потолка коридора в блоках.
 LEVELS = [
-    dict(name="STEREO MADNESS", diff="EASY", stars=1, seed=1101, length=145,
+    dict(name="STEREO MADNESS", diff="EASY", stars=1, seed=1101, length=165,
          bg="#2b5cd8", ground="#16307f", obj="#101d52", rest=(5, 8),
+         ship=[(.30, .48), (.85, .99)], ceil=6, gate_gap=4,
          patterns={"single": 6, "pair": 3, "step": 2, "double": 1}),
-    dict(name="BACK ON TRACK", diff="EASY", stars=2, seed=1202, length=155,
+    dict(name="BACK ON TRACK", diff="EASY", stars=2, seed=1202, length=175,
          bg="#1f7fd0", ground="#0f4d80", obj="#0b2b45", rest=(4, 7),
-         patterns={"single": 4, "double": 3, "step": 3, "float": 2, "pair": 2}),
-    dict(name="POLARGEIST", diff="NORMAL", stars=3, seed=1303, length=165,
+         ship=[(.45, .60)], ceil=6, gate_gap=4,
+         patterns={"single": 4, "double": 3, "step": 3, "float": 2, "pair": 2,
+                   "zigzag": 2}),
+    dict(name="POLARGEIST", diff="NORMAL", stars=3, seed=1303, length=185,
          bg="#17b6c9", ground="#0d6d7a", obj="#08363d", rest=(4, 7),
-         patterns={"single": 3, "double": 3, "orb": 3, "step": 2, "float": 2}),
-    dict(name="DRY OUT", diff="NORMAL", stars=4, seed=1404, length=170,
+         ship=[(.34, .47)], ceil=6, gate_gap=4,
+         patterns={"single": 3, "double": 3, "orb": 3, "step": 2, "float": 2,
+                   "descend": 2}),
+    dict(name="DRY OUT", diff="NORMAL", stars=4, seed=1404, length=190,
          bg="#d98b1f", ground="#8a5410", obj="#452806", rest=(4, 6),
-         patterns={"double": 3, "triple": 2, "orb": 3, "step": 2, "tower": 2}),
-    dict(name="BASE AFTER BASE", diff="HARD", stars=5, seed=1505, length=178,
+         ship=[(.67, .83)], ceil=6, gate_gap=4,
+         patterns={"double": 3, "triple": 2, "orb": 3, "step": 2, "tower": 2,
+                   "pillar": 2}),
+    dict(name="BASE AFTER BASE", diff="HARD", stars=5, seed=1505, length=198,
          bg="#5b3fd6", ground="#33217f", obj="#1a1145", rest=(4, 6),
-         patterns={"step": 4, "tower": 3, "float": 3, "double": 2, "pad": 2}),
-    dict(name="CAN'T LET GO", diff="HARD", stars=6, seed=1606, length=182,
+         ship=[(.52, .69)], ceil=6, gate_gap=3,
+         patterns={"step": 4, "tower": 3, "float": 3, "double": 2, "pad": 2,
+                   "zigzag": 3}),
+    dict(name="CAN'T LET GO", diff="HARD", stars=6, seed=1606, length=200,
          bg="#2fa844", ground="#186627", obj="#0b3514", rest=(3, 6),
-         patterns={"float": 4, "hop": 3, "double": 3, "orb": 2, "stairs": 2}),
-    dict(name="JUMPER", diff="HARDER", stars=7, seed=1707, length=188,
+         ship=[(.40, .55)], ceil=6, gate_gap=3,
+         patterns={"float": 4, "hop": 3, "double": 3, "orb": 2, "stairs": 2,
+                   "descend": 2}),
+    dict(name="JUMPER", diff="HARDER", stars=7, seed=1707, length=205,
          bg="#d43a2a", ground="#8a2118", obj="#45100b", rest=(3, 5),
-         patterns={"orb": 4, "orbchain": 3, "double": 2, "pad": 2, "float": 2}),
-    dict(name="TIME MACHINE", diff="HARDER", stars=8, seed=1808, length=192,
+         ship=[(.25, .37), (.62, .75)], ceil=6, gate_gap=3,
+         patterns={"orb": 4, "orbchain": 3, "double": 2, "pad": 2, "float": 2,
+                   "pillar": 2}),
+    dict(name="TIME MACHINE", diff="HARDER", stars=8, seed=1808, length=210,
          bg="#8b2fbf", ground="#521a73", obj="#290d3a", rest=(3, 5),
-         patterns={"triple": 3, "tower": 3, "orb": 3, "stairs": 2, "hop": 2}),
-    dict(name="CYCLES", diff="HARDER", stars=9, seed=1909, length=196,
+         ship=[(.30, .45), (.70, .82)], ceil=6, gate_gap=3,
+         patterns={"triple": 3, "tower": 3, "orb": 3, "stairs": 2, "hop": 2,
+                   "zigzag": 2}),
+    dict(name="CYCLES", diff="HARDER", stars=9, seed=1909, length=212,
          bg="#b5702a", ground="#6e4116", obj="#38210a", rest=(3, 5),
-         patterns={"hop": 4, "float": 3, "orb": 3, "rhythm": 2, "double": 2}),
-    dict(name="XSTEP", diff="INSANE", stars=10, seed=2010, length=200,
+         ship=[(.55, .70)], ceil=6, gate_gap=3,
+         patterns={"hop": 4, "float": 3, "orb": 3, "rhythm": 2, "double": 2,
+                   "descend": 2}),
+    dict(name="XSTEP", diff="INSANE", stars=10, seed=2010, length=218,
          bg="#3a3fb0", ground="#22246b", obj="#111339", rest=(3, 5),
+         ship=[(.40, .52), (.78, .90)], ceil=6, gate_gap=3,
          patterns={"rhythm": 3, "triple": 3, "orbchain": 3, "stairs": 2,
-                   "tower": 2, "pad": 2}),
-    dict(name="CLUTTERFUNK", diff="INSANE", stars=11, seed=2111, length=208,
+                   "tower": 2, "pad": 2, "pillar": 2}),
+    dict(name="CLUTTERFUNK", diff="INSANE", stars=11, seed=2111, length=224,
          bg="#4a5a72", ground="#2b3546", obj="#141a24", rest=(2, 4),
-         patterns={"tower": 4, "stairs": 3, "triple": 3, "float": 3, "orb": 2}),
+         ship=[(.35, .48)], ceil=6, gate_gap=3,
+         patterns={"tower": 4, "stairs": 3, "triple": 3, "float": 3, "orb": 2,
+                   "zigzag": 3, "descend": 2}),
     dict(name="THEORY OF EVERYTHING", diff="INSANE", stars=12, seed=2212,
-         length=212, bg="#b02a5e", ground="#6b1839", obj="#380b1e",
-         rest=(2, 4),
-         patterns={"orbchain": 4, "orb": 3, "hop": 3, "triple": 3, "pad": 2}),
+         length=230, bg="#b02a5e", ground="#6b1839", obj="#380b1e",
+         rest=(2, 4), ship=[(.25, .38), (.65, .78)], ceil=6, gate_gap=3,
+         patterns={"orbchain": 4, "orb": 3, "hop": 3, "triple": 3, "pad": 2,
+                   "pillar": 2}),
     dict(name="ELECTROMAN ADVENTURES", diff="INSANE", stars=10, seed=2313,
-         length=206, bg="#1fa0a8", ground="#116066", obj="#083236",
-         rest=(3, 5),
+         length=226, bg="#1fa0a8", ground="#116066", obj="#083236",
+         rest=(3, 5), ship=[(.30, .45), (.72, .88)], ceil=6, gate_gap=3,
          patterns={"pad": 3, "orb": 3, "float": 3, "hop": 3, "double": 2,
-                   "rhythm": 2}),
-    dict(name="CLUBSTEP", diff="DEMON", stars=14, seed=2414, length=225,
+                   "rhythm": 2, "zigzag": 2}),
+    dict(name="CLUBSTEP", diff="DEMON", stars=14, seed=2414, length=245,
          bg="#3d1f6b", ground="#241040", obj="#120722", rest=(2, 4),
+         ship=[(.42, .55), (.80, .92)], ceil=6, gate_gap=3,
          patterns={"orbchain": 4, "triple": 4, "tower": 3, "stairs": 3,
-                   "hop": 3, "pad": 2}),
+                   "hop": 3, "pad": 2, "pillar": 2, "descend": 2}),
 ]
 
 DIFF_COLOR = {
@@ -313,12 +348,82 @@ def pat_pad(objs, x, rnd, cfg):
     return width + 1, 7
 
 
+def pat_zigzag(objs, x, rnd, cfg):
+    """Платформы через одну на высоте 1 и 2 — «лесенка» туда-сюда."""
+    heights = [1, 2, 1] if rnd.random() < 0.5 else [2, 1, 2]
+    pw, gap = 3, 2
+    span = len(heights) * (pw + gap) - gap
+    for k, hgt in enumerate(heights):
+        for i in range(pw):
+            _add(objs, "block", x + k * (pw + gap) + i, hgt - 1)
+    _spikes(objs, x + 1, span)
+    return span + 1, 7
+
+
+def pat_descend(objs, x, rnd, cfg):
+    """Высокая площадка и лесенка вниз: 3 → 2 → 1 → земля, под ней шипы."""
+    for i in range(3):                          # заход по ступенькам вверх
+        _column(objs, x + i, i + 1)
+    for i in range(2):                          # площадка наверху
+        _column(objs, x + 3 + i, 3)
+    _column(objs, x + 5, 2)                     # спуск
+    _column(objs, x + 6, 1)
+    _spikes(objs, x + 7, 3)
+    return 10, 7
+
+
+def pat_pillar(objs, x, rnd, cfg):
+    """Пад закидывает на высокую стену, с неё — длинный прыжок через шипы."""
+    _add(objs, "pad", x, 0)
+    wall = x + 5
+    for i in range(3):
+        _column(objs, wall + i, 4)
+    _spikes(objs, x + 1, 4)                     # шипы между падом и стеной
+    _spikes(objs, wall + 3, 4)                  # и сразу за стеной
+    return (wall + 3 + 4) - x, 8
+
+
 PATTERNS = {
     "single": pat_single, "double": pat_double, "triple": pat_triple,
     "pair": pat_pair, "rhythm": pat_rhythm, "step": pat_step,
     "tower": pat_tower, "stairs": pat_stairs, "float": pat_float,
     "hop": pat_hop, "orb": pat_orb, "orbchain": pat_orbchain, "pad": pat_pad,
+    "zigzag": pat_zigzag, "descend": pat_descend, "pillar": pat_pillar,
 }
+
+
+# --- участок на кораблике ---------------------------------------------------
+
+def build_ship(objs, x0, x1, rnd, cfg):
+    """Коридор с потолком и «воротами», между которыми кораблик пролетает.
+
+    Ворота — столб с пола и/или свисающий с потолка, между ними проём
+    высотой gate_gap блоков (при высоте кубика 0.9 это запас больше двух
+    блоков). Соседние ворота отличаются по высоте проёма не больше чем на
+    один блок, поэтому резких манёвров не требуется."""
+    ceil = cfg["ceil"]
+    gap = cfg["gate_gap"]
+    _add(objs, "portal_ship", x0, 0)
+    _add(objs, "portal_cube", x1, 0)
+    for x in range(int(x0), int(x1) + 1):        # сплошной потолок
+        _add(objs, "ceil", x, ceil)
+
+    top_max = ceil - gap                         # самый высокий нижний край
+    bottom = 0                                   # проём начинается у пола
+    x = x0 + 9                                   # первые ворота — не сразу
+    while x < x1 - 8:
+        step = rnd.choice([-1, 0, 1]) if x > x0 + 10 else 0
+        bottom = max(0, min(top_max, bottom + step))
+        width = rnd.choice([2, 2, 3])
+        for i in range(width):
+            for y in range(bottom):              # столб с пола
+                _add(objs, "block", x + i, y)
+            for y in range(bottom + gap, ceil):  # столб с потолка
+                _add(objs, "block", x + i, y)
+        if bottom == 0 and rnd.random() < 0.5:   # редкий шип на полу
+            _add(objs, "spike", x + width + 2, 0)
+        x += width + rnd.randint(6, 8)
+    return objs
 
 
 def build_level(index):
@@ -330,25 +435,41 @@ def build_level(index):
         names.append(key)
         weights.append(w)
     total = float(sum(weights))
+    finish = cfg["length"]
+
+    # чередование кубик / кораблик по долям из cfg["ship"]
+    zones = [(f0 * finish, f1 * finish) for f0, f1 in cfg.get("ship", ())]
+    segments, cursor = [], START_X + 6.0
+    for z0, z1 in zones:
+        segments.append(("cube", cursor, z0 - 6))
+        segments.append(("ship", z0, z1))
+        cursor = z1 + 10                         # чистая земля после портала
+    segments.append(("cube", cursor, finish - 12))
 
     objs = []
-    x = START_X + 6.0
-    finish = cfg["length"]
-    last = None
-    while x < finish - 14:
-        r, pick = rnd.random() * total, names[0]
-        acc = 0.0
-        for name, w in zip(names, weights):
-            acc += w
-            if r <= acc:
-                pick = name
+    for kind, a, b in segments:
+        if kind == "ship":
+            build_ship(objs, a, b, rnd, cfg)
+            continue
+        x, last = a, None
+        while x < b:
+            r, pick = rnd.random() * total, names[0]
+            acc = 0.0
+            for name, w in zip(names, weights):
+                acc += w
+                if r <= acc:
+                    pick = name
+                    break
+            if pick == last and rnd.random() < 0.6:   # меньше повторов подряд
+                pick = names[rnd.randrange(len(names))]
+            last = pick
+            mark = len(objs)
+            width, need_rest = PATTERNS[pick](objs, x, rnd, cfg)
+            if x + width > b:            # не влезает до портала или финиша —
+                del objs[mark:]          # откатываем и заканчиваем участок
                 break
-        if pick == last and rnd.random() < 0.6:      # меньше повторов подряд
-            pick = names[rnd.randrange(len(names))]
-        last = pick
-        width, need_rest = PATTERNS[pick](objs, x, rnd, cfg)
-        lo, hi = cfg["rest"]
-        x += width + max(need_rest, rnd.randint(lo, hi))
+            lo, hi = cfg["rest"]
+            x += width + max(need_rest, rnd.randint(lo, hi))
 
     _add(objs, "end", finish, 0)
     for i, o in enumerate(objs):
@@ -389,6 +510,7 @@ class World(object):
         self.coyote = COYOTE
         self.rot = 0.0
         self.used = set()
+        self.mode = "cube"
 
     @property
     def progress(self):
@@ -420,6 +542,23 @@ class World(object):
     def _sub(self, h, ev):
         self.px += SPEED * h
         self.buffer = max(0.0, self.buffer - h)
+
+        # порталы: смена режима строго по пересечению координаты
+        for o in self.near(self.px - 1.0, self.px + 1.0):
+            if o["t"] == "portal_ship" and self.mode != "ship" \
+                    and self.px >= o["x"]:
+                self.mode = "ship"
+                self.vy = 0.0
+                ev.append("portal")
+            elif o["t"] == "portal_cube" and self.mode != "cube" \
+                    and self.px >= o["x"]:
+                self.mode = "cube"
+                self.rot = 0.0
+                ev.append("portal")
+
+        if self.mode == "ship":
+            self._sub_ship(h, ev)
+            return
 
         prev_bottom = self.py
         self.vy -= GRAVITY * h
@@ -525,6 +664,65 @@ class World(object):
         else:
             self.rot -= 430.0 * h
 
+    # -- физика кораблика ---------------------------------------------------
+    def _sub_ship(self, h, ev):
+        """Удержание — тяга вверх, отпускание — падение, скорость плавная."""
+        acc = (SHIP_THRUST - SHIP_G) if self.holding else -SHIP_G
+        self.vy = max(-SHIP_VMAX, min(SHIP_VMAX, self.vy + acc * h))
+        self.py += self.vy * h
+        self.on_ground = False
+
+        if self.py <= 0.0:                       # пол: скользим, не умираем
+            self.py = 0.0
+            self.vy = max(0.0, self.vy)
+            self.on_ground = True
+
+        left, right = self.px - PLAYER_W / 2, self.px + PLAYER_W / 2
+        for o in self.near(self.px - 2.0, self.px + 2.0):
+            t = o["t"]
+            if t == "ceil":
+                lim = o["y"] - PLAYER_W
+                if abs(self.px - (o["x"] + 0.5)) < 0.95 and self.py > lim:
+                    self.py = lim
+                    self.vy = min(0.0, self.vy)
+            elif t == "block":
+                bx, by = o["x"], o["y"]
+                ox = min(right, bx + 1.0) - max(left, bx)
+                oy = min(self.py + PLAYER_W, by + 1.0) - max(self.py, by)
+                if ox <= 0.0 or oy <= 0.0:
+                    continue
+                if oy <= ox:                     # скользим по верху или низу
+                    if self.py + PLAYER_W / 2 > by + 0.5:
+                        self.py = by + 1.0
+                        self.vy = max(0.0, self.vy)
+                        self.on_ground = True
+                    else:
+                        self.py = by - PLAYER_W
+                        self.vy = min(0.0, self.vy)
+                else:                            # лобовой удар в стену
+                    self.dead = True
+                    ev.append("die")
+                    return
+
+        kl, kr = self.px - HIT_W, self.px + HIT_W
+        kb, kt = self.py + HIT_BOT, self.py + HIT_TOP
+        for o in self.near(self.px - 2.0, self.px + 2.0):
+            if o["t"] == "spike":
+                sl = o["x"] + 0.5 - SPIKE_HX
+                sr = o["x"] + 0.5 + SPIKE_HX
+                if kr > sl and kl < sr and kb < o["y"] + SPIKE_HY \
+                        and kt > o["y"]:
+                    self.dead = True
+                    ev.append("die")
+                    return
+            elif o["t"] == "end" and self.px >= o["x"]:
+                self.won = True
+                ev.append("win")
+                return
+
+        self.rot = max(-40.0, min(40.0, math.degrees(
+            math.atan2(self.vy, SPEED)) * SHIP_TILT))
+
 
 # ---------------------------------------------------------------------------
 # ТЕКСТУРЫ (рисуем через ui.ImageContext — ориентация предсказуема)
@@ -620,6 +818,62 @@ def tex_player(size, main, second):
         ui.set_color((1, 1, 1, .28))
         ui.Path.rounded_rect(w * .13, h * .13, w * .74, h * .22, w * .09).fill()
     return make_texture(size, size, draw)
+
+
+def tex_ship(w_px, h_px, main, second):
+    """Кораблик: корпус с крылом, сверху сидит кубик (как в оригинале)."""
+    def draw(w, h):
+        body = ui.Path()
+        body.move_to(w * .97, h * .60)           # нос
+        body.line_to(w * .30, h * .86)
+        body.line_to(w * .05, h * .78)
+        body.line_to(w * .10, h * .48)
+        body.line_to(w * .55, h * .42)
+        body.close()
+        ui.set_color((.06, .06, .08))
+        body.fill()
+        inner = ui.Path()
+        inner.move_to(w * .88, h * .60)
+        inner.line_to(w * .32, h * .80)
+        inner.line_to(w * .13, h * .74)
+        inner.line_to(w * .17, h * .52)
+        inner.line_to(w * .56, h * .48)
+        inner.close()
+        ui.set_color((.80, .82, .90))
+        inner.fill()
+        ui.set_color((.35, .38, .48))            # крыло
+        ui.Path.rounded_rect(w * .18, h * .60, w * .40, h * .12,
+                             h * .05).fill()
+        ui.set_color((.06, .06, .08))            # кубик в кабине
+        ui.Path.rounded_rect(w * .26, h * .06, w * .40, h * .40,
+                             w * .07).fill()
+        ui.set_color(main)
+        ui.Path.rounded_rect(w * .29, h * .09, w * .34, h * .34,
+                             w * .06).fill()
+        ui.set_color(second)
+        ui.Path.rounded_rect(w * .38, h * .18, w * .16, h * .16,
+                             w * .04).fill()
+    return make_texture(w_px, h_px, draw)
+
+
+def tex_portal(w_px, h_px, color, ring):
+    """Портал: вытянутое кольцо. Розовый — кораблик, зелёный — кубик."""
+    def draw(w, h):
+        ui.set_color(color + (.22,))
+        ui.Path.oval(0, 0, w, h).fill()
+        outer = ui.Path.oval(w * .10, h * .04, w * .80, h * .92)
+        outer.append_path(ui.Path.oval(w * .26, h * .12, w * .48, h * .76))
+        outer.eo_fill_rule = True
+        ui.set_color((.06, .06, .08))
+        outer.fill()
+        mid = ui.Path.oval(w * .14, h * .07, w * .72, h * .86)
+        mid.append_path(ui.Path.oval(w * .28, h * .14, w * .44, h * .72))
+        mid.eo_fill_rule = True
+        ui.set_color(ring)
+        mid.fill()
+        ui.set_color(color + (.45,))
+        ui.Path.oval(w * .28, h * .14, w * .44, h * .72).fill()
+    return make_texture(w_px, h_px, draw)
 
 
 def tex_end(w_px, h_px, color):
@@ -779,8 +1033,14 @@ def tex_preview(w_px, h_px, index, cfg):
                 continue
             x = (o["x"] - START_X) * scale
             y = ground - (o["y"] + 1) * scale
-            if o["t"] == "block":
+            if o["t"] in ("block", "ceil"):
                 ui.Path.rect(x, y, scale * .95, scale * .95).fill()
+            elif o["t"] in ("portal_ship", "portal_cube"):
+                ui.set_color((1.0, .35, .75) if o["t"] == "portal_ship"
+                             else (.35, 1.0, .55))
+                ui.Path.rect(x, ground - scale * 5, scale * .5,
+                             scale * 5).fill()
+                ui.set_color(shade(obj, 1.6))
             elif o["t"] == "spike":
                 p = ui.Path()
                 p.move_to(x + scale * .5, y)
@@ -905,6 +1165,8 @@ class GeometryDash(Scene):
         self._make_backdrop()
         self.player_tex = tex_player(self.BLOCK * 2, (.20, .85, 1.0),
                                      (1.0, .95, .35))
+        self.ship_tex = tex_ship(self.BLOCK * 3.1, self.BLOCK * 2.2,
+                                 (.20, .85, 1.0), (1.0, .95, .35))
         self.orb_tex = tex_orb(self.BLOCK * 2.4)
         self.pad_tex = tex_pad(self.BLOCK * 2, self.BLOCK)
         self.tex_cache = {}
@@ -1045,29 +1307,33 @@ class GeometryDash(Scene):
                    size=(cw * .86, prev_h), parent=self.card,
                    position=(0, ch * .04))
 
-        SpriteNode(tex_face(h * .16, cfg["diff"]), size=(h * .13, h * .13),
-                   parent=self.card, position=(-cw * .30, -ch * .26))
-        LabelNode(cfg["diff"], font=(FONT2, h * .042),
+        # Нижняя часть карточки: три колонки в своих третях, каждая
+        # подпись строго под своей картинкой — ничто ни на что не наезжает.
+        col = cw * .31
+        row_icon, row_text = -ch * .24, -ch * .40
+        SpriteNode(tex_face(h * .16, cfg["diff"]), size=(h * .12, h * .12),
+                   parent=self.card, position=(-col, row_icon))
+        LabelNode(cfg["diff"], font=(FONT2, h * .036),
                   color=DIFF_COLOR[cfg["diff"]], parent=self.card,
-                  position=(-cw * .30, -ch * .40))
+                  position=(-col, row_text))
 
         star = tex_star(h * .10)
-        row = min(cfg["stars"], 7)
-        for i in range(row):
-            SpriteNode(star, size=(h * .05, h * .05), parent=self.card,
-                       position=((i - (row - 1) / 2.0) * h * .055,
-                                 -ch * .26))
-        LabelNode("%d STARS" % cfg["stars"], font=(FONT2, h * .042),
+        shown = min(cfg["stars"], 5)
+        for i in range(shown):
+            SpriteNode(star, size=(h * .045, h * .045), parent=self.card,
+                       position=((i - (shown - 1) / 2.0) * h * .050,
+                                 row_icon))
+        LabelNode("%d STARS" % cfg["stars"], font=(FONT2, h * .036),
                   color=(1, 1, 1, .85), parent=self.card,
-                  position=(0, -ch * .40))
+                  position=(0, row_text))
 
         best = int(self.save.get(str(self.level_index), 0))
-        LabelNode("%d%%" % best, font=(FONT, h * .075),
+        LabelNode("%d%%" % best, font=(FONT, h * .062),
                   color="#3fd35a" if best >= 100 else "white",
-                  parent=self.card, position=(cw * .30, -ch * .26))
-        LabelNode("NORMAL" if best < 100 else "COMPLETE",
-                  font=(FONT2, h * .042), color=(1, 1, 1, .85),
-                  parent=self.card, position=(cw * .30, -ch * .40))
+                  parent=self.card, position=(col, row_icon))
+        LabelNode("BEST" if best < 100 else "COMPLETE",
+                  font=(FONT2, h * .036), color=(1, 1, 1, .85),
+                  parent=self.card, position=(col, row_text))
 
     def _slide_card(self, direction):
         w = self.size.w
@@ -1102,15 +1368,21 @@ class GeometryDash(Scene):
         b = self.BLOCK
         self.tex_cache = {
             "block": tex_block(b * 2, obj, shade(obj, 2.2), shade(obj, 3.0)),
+            "ceil": tex_block(b * 2, obj, shade(obj, 2.2), shade(obj, 3.0)),
             "spike": tex_spike(b * 2, shade(obj, 1.25), shade(obj, 2.6)),
             "orb": self.orb_tex,
             "pad": self.pad_tex,
             "end": tex_end(b, b * 12, shade(cfg["bg"], 1.8)),
+            "portal_ship": tex_portal(b * 1.6, b * 6, (1.0, .35, .75),
+                                      (1.0, .55, .85)),
+            "portal_cube": tex_portal(b * 1.6, b * 6, (.35, 1.0, .55),
+                                      (.55, 1.0, .70)),
         }
 
         self.player = SpriteNode(self.player_tex, size=(b * PLAYER_W,
                                                         b * PLAYER_W),
                                  parent=self.world_layer)
+        self.mode_shown = "cube"
         self.cam_x = self.world.px - 5.0
         self.cam_y = 0.0
 
@@ -1129,17 +1401,29 @@ class GeometryDash(Scene):
                               parent=self.ui_layer)
         self.bar.anchor_point = (0, 0.5)
         self.bar.position = (w / 2 - bar_w / 2, h * .945)
+        # Три подписи на одной строке под полосой, каждая в своей трети:
+        # название слева, текущий процент по центру, рекорд справа.
+        name_fs = h * .038
+        if len(cfg["name"]) > 15:
+            name_fs *= 15.0 / len(cfg["name"])
+        nm = LabelNode(cfg["name"], font=(FONT2, name_fs),
+                       color=(1, 1, 1, .65), parent=self.ui_layer,
+                       position=(w * .035, h * .875))
+        nm.anchor_point = (0.0, 0.5)
         self.pct_label = LabelNode("0%", font=(FONT2, h * .040), color="white",
                                    parent=self.ui_layer,
-                                   position=(w / 2, h * .885))
-        LabelNode(cfg["name"], font=(FONT2, h * .038), color=(1, 1, 1, .65),
-                  parent=self.ui_layer, position=(w * .30, h * .885))
+                                   position=(w / 2, h * .875))
+        self.best_label = LabelNode("", font=(FONT2, h * .038),
+                                    color=(1, 1, 1, .65),
+                                    parent=self.ui_layer,
+                                    position=(w * .965, h * .875))
+        self.best_label.anchor_point = (1.0, 0.5)
         self.attempt_label = LabelNode("Attempt 1", font=(FONT, h * .075),
                                        color=(1, 1, 1, .9),
                                        parent=self.world_layer)
-        self.buttons.append(Button("II", w * .09, h * .085, "#5b6bd6",
+        self.buttons.append(Button("II", w * .085, h * .075, "#5b6bd6",
                                    self.show_levels, parent=self.ui_layer,
-                                   position=(w * .945, h * .93)))
+                                   position=(w * .06, h * .945)))
         self.dead_timer = 0.0
         self._place_attempt_label()
 
@@ -1197,10 +1481,16 @@ class GeometryDash(Scene):
             if key in self.sprites:
                 continue
             t = o["t"]
-            if t == "block":
+            if t in ("block", "ceil"):
                 n = SpriteNode(self.tex_cache["block"], size=(b, b))
             elif t == "spike":
                 n = SpriteNode(self.tex_cache["spike"], size=(b, b))
+            elif t in ("portal_ship", "portal_cube"):
+                n = SpriteNode(self.tex_cache[t], size=(b * 1.6, b * 6))
+                n.anchor_point = (0.5, 0.0)
+                n.run_action(Action.repeat(Action.sequence(
+                    Action.scale_x_to(1.12, .5), Action.scale_x_to(0.94, .5)),
+                    -1))
             elif t == "orb":
                 n = SpriteNode(self.tex_cache["orb"], size=(b * 1.2, b * 1.2))
                 n.run_action(Action.repeat(Action.sequence(
@@ -1221,7 +1511,7 @@ class GeometryDash(Scene):
             sx = (o["x"] - self.cam_x) * b
             sy = self.GROUND_Y + (o["y"] - self.cam_y) * b
             t = o["t"]
-            if t in ("block", "spike"):
+            if t in ("block", "spike", "ceil"):
                 n.position = (sx + b / 2, sy + b / 2)
             elif t == "orb":
                 n.position = (sx, sy)
@@ -1284,6 +1574,8 @@ class GeometryDash(Scene):
                 play("game:Boing", 0.25)
             elif e == "pad":
                 play("game:Boing", 0.35)
+            elif e == "portal":
+                play("digital:PhaserUp1", 0.3)
             elif e == "die":
                 self.explode()
                 self.dead_timer = 0.55
@@ -1298,12 +1590,21 @@ class GeometryDash(Scene):
                 self.finish_level()
                 return
 
-        # камера
+        b = self.BLOCK
+        if w.mode != self.mode_shown:            # смена облика в портале
+            self.mode_shown = w.mode
+            if w.mode == "ship":
+                self.player.texture = self.ship_tex
+                self.player.size = (b * 1.55, b * 1.10)
+            else:
+                self.player.texture = self.player_tex
+                self.player.size = (b * PLAYER_W, b * PLAYER_W)
+
+        # камера: в коридоре кораблика держим весь коридор в кадре
         self.cam_x = w.px - 5.0
-        target_y = max(0.0, w.py - 3.4)
+        target_y = 0.7 if w.mode == "ship" else max(0.0, w.py - 3.4)
         self.cam_y += (target_y - self.cam_y) * min(1.0, dt * 6.0)
 
-        b = self.BLOCK
         self.player.position = ((w.px - self.cam_x) * b,
                                 self.GROUND_Y + (w.py - self.cam_y) * b +
                                 b * PLAYER_W / 2)
@@ -1317,8 +1618,8 @@ class GeometryDash(Scene):
     def update_bar(self):
         pct = self.world.progress
         self.bar.x_scale = max(0.001, pct)
-        self.pct_label.text = "%d%%   best %d%%" % (int(pct * 100),
-                                                    self.best_pct)
+        self.pct_label.text = "%d%%" % int(pct * 100)
+        self.best_label.text = "best %d%%" % self.best_pct
 
     def scroll_bg(self, dt):
         h = self.size.h
